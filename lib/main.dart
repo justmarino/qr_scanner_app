@@ -165,7 +165,8 @@ class ScannerPage extends StatefulWidget {
 }
 
 class _ScannerPageState extends State<ScannerPage> {
-  String resultado = 'Escanea un código de barras';
+  String resultado = 'Presiona "Escanear" para iniciar';
+  bool isScanning = false;
 
   void detectarCodigo(BarcodeCapture captura) {
     if (captura.barcodes.isEmpty) return;
@@ -175,8 +176,23 @@ class _ScannerPageState extends State<ScannerPage> {
     if (codigo != null && codigo.isNotEmpty) {
       setState(() {
         resultado = codigo;
+        isScanning = false;
       });
     }
+  }
+
+  void iniciarEscaneo() {
+    setState(() {
+      resultado = 'Escaneando...';
+      isScanning = true;
+    });
+  }
+
+  void detenerEscaneo() {
+    setState(() {
+      isScanning = false;
+      resultado = 'Escaneo detenido';
+    });
   }
 
   @override
@@ -199,10 +215,38 @@ class _ScannerPageState extends State<ScannerPage> {
       ),
       body: Column(
         children: [
-          Expanded(
-            flex: 4,
-            child: MobileScanner(
-              onDetect: detectarCodigo,
+          if (isScanning)
+            Expanded(
+              flex: 4,
+              child: MobileScanner(
+                onDetect: detectarCodigo,
+              ),
+            )
+          else
+            Expanded(
+              flex: 4,
+              child: Container(
+                color: Colors.grey[200],
+                child: const Center(
+                  child: Icon(
+                    Icons.qr_code_scanner,
+                    size: 120,
+                    color: Colors.green,
+                  ),
+                ),
+              ),
+            ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FilledButton.icon(
+                  onPressed: isScanning ? detenerEscaneo : iniciarEscaneo,
+                  icon: Icon(isScanning ? Icons.stop : Icons.play_arrow),
+                  label: Text(isScanning ? 'Detener' : 'Escanear'),
+                ),
+              ],
             ),
           ),
           Expanded(
