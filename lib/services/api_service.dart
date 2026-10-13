@@ -6,7 +6,7 @@ import '../models/producto.dart';
 class ApiService {
   // URL de producción en Hostinger
   static const String baseUrl =
-      'https://victorypoint.justmarino.com';
+      'https://proyecto.justmarino.com/SEYER-Control';
 
   static Future<Producto> buscarProducto(String codigoBarras) async {
     final url = Uri.parse('$baseUrl/api/escaneo.php');
